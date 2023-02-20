@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -17,6 +19,33 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
+  const newCard = document.createElement("div");
+  newCard.classList.add("card");
+  newCard.addEventListener("click", console.log(`${article.headline}`));
+
+  const newHeadline = document.createElement("div");
+  newHeadline.classList.add("headline");
+  newHeadline.textContent = article.headline;
+
+  const newAuthor = document.createElement("div");
+  newAuthor.classList.add("author");
+
+  const newImageContainer = document.createElement("div");
+  newImageContainer.classList.add("img-container");
+
+  const newImage = document.createElement("img");
+  newImage.src = article.authorPhoto;
+
+  const newSpan = document.createElement("span");
+  newSpan.textContent = `By ${article.authorName}`;
+
+  newCard.appendChild(newHeadline);
+  newCard.appendChild(newAuthor);
+  newAuthor.appendChild(newImageContainer);
+  newAuthor.appendChild(newSpan);
+  newImageContainer.appendChild(newImage);
+
+  return newCard;
 }
 
 const cardAppender = (selector) => {
@@ -28,6 +57,29 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
+  const parentElement = document.querySelector(selector);
+  axios.get("http://localhost:5001/api/articles")
+    .then(response => {
+      return response.data.articles; // => category array => article array
+    })
+    .then(response => {
+      // console.log(response);
+      for (const subject in response) {
+        // console.log(`Subject: ${subject}`);
+        // console.log(response[subject]);
+        response[subject].forEach((article) => {
+          // console.log(article)
+          const articleCard = Card(article);
+          parentElement.appendChild(articleCard);
+        });
+      }
+
+      // articlesBySubject.forEach(subject => {
+      //   subject.forEach(article => {
+      //     console.log(article);
+      //   })
+      // })
+    })
 }
 
 export { Card, cardAppender }
